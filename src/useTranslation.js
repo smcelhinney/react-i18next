@@ -1,4 +1,12 @@
-import { useContext, useCallback, useMemo, useEffect, useRef, useState } from 'react';
+import {
+  useContext,
+  useCallback,
+  useMemo,
+  useEffect,
+  useRef,
+  useState,
+  createElement,
+} from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useSyncExternalStore } from 'use-sync-external-store/shim';
 import { getI18n, getDefaults, ReportNamespaces, I18nContext } from './context.js';
@@ -106,8 +114,38 @@ export const useTranslation = (ns, props = {}) => {
       keyPrefix,
     );
 
+    // Wrap t function to return React element with debug attributes when enabled
+    const debugOpts = i18nOptions.debugKeyAttributes;
+    const wrappedT =
+      debugOpts && calculatedT
+        ? (key, tOptions) => {
+            const text = calculatedT(key, tOptions);
+            // Skip wrapping if text is not a string (could be array, object, etc.)
+            if (!isString(text)) return text;
+
+            const ns = tOptions?.ns || calculatedT.ns || namespaces[0];
+            const keyAttrName =
+              typeof debugOpts === 'object'
+                ? debugOpts.keyAttributeName || 'data-i18n-key'
+                : 'data-i18n-key';
+            const nsAttrName =
+              typeof debugOpts === 'object'
+                ? debugOpts.namespaceAttributeName || 'data-i18n-namespace'
+                : 'data-i18n-namespace';
+
+            return createElement(
+              'span',
+              {
+                [keyAttrName]: key,
+                [nsAttrName]: ns,
+              },
+              text,
+            );
+          }
+        : calculatedT;
+
     const newSnapshot = {
-      t: calculatedT,
+      t: wrappedT,
       ready: calculatedReady,
       lng: currentLng,
       keyPrefix,
