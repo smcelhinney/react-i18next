@@ -624,5 +624,21 @@ export function Trans({
   // and override `defaultTransParent` if is present
   const useAsParent = parent ?? reactI18nextOptions.defaultTransParent;
 
-  return useAsParent ? createElement(useAsParent, additionalProps, content) : content;
+  // Add debug key attributes if enabled and there's a parent wrapper
+  const debugOpts = reactI18nextOptions.debugKeyAttributes;
+  const shouldAddDebugAttrs = debugOpts && useAsParent;
+
+  const finalAdditionalProps = shouldAddDebugAttrs
+    ? {
+        ...additionalProps,
+        [typeof debugOpts === 'object'
+          ? debugOpts.keyAttributeName || 'data-i18n-key'
+          : 'data-i18n-key']: i18nKey,
+        [typeof debugOpts === 'object'
+          ? debugOpts.namespaceAttributeName || 'data-i18n-namespace'
+          : 'data-i18n-namespace']: Array.isArray(namespaces) ? namespaces.join(',') : namespaces,
+      }
+    : additionalProps;
+
+  return useAsParent ? createElement(useAsParent, finalAdditionalProps, content) : content;
 }

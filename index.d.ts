@@ -160,6 +160,22 @@ declare module 'i18next' {
   interface CustomInstanceExtensions {
     reportNamespaces?: ReportNamespaces;
   }
+
+  interface ReactOptions {
+    /**
+     * Enable debug data attributes on translation output for easier QA/testing.
+     * When enabled, translations are wrapped with data-i18n-key and data-i18n-namespace attributes.
+     * @default false
+     */
+    debugKeyAttributes?:
+      | boolean
+      | {
+          /** Custom attribute name for the translation key (default: 'data-i18n-key') */
+          keyAttributeName?: string;
+          /** Custom attribute name for the namespace (default: 'data-i18n-namespace') */
+          namespaceAttributeName?: string;
+        };
+  }
 }
 
 type ObjectOrNever = TypeOptions['allowObjectInHTMLChildren'] extends true

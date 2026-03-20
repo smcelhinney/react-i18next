@@ -12,6 +12,7 @@ let defaultOptions = {
   useSuspense: true,
   unescape,
   transDefaultProps: undefined, // { tOptions: {}, shouldUnescape: false, values: {}, components: [] }
+  debugKeyAttributes: false, // enable data-i18n-key and data-i18n-namespace attributes on translation output
 };
 
 export const setDefaults = (options = {}) => {
