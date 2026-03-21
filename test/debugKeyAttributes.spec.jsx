@@ -178,6 +178,57 @@ describe('debugKeyAttributes', () => {
       expect(span).toHaveAttribute('data-my-key', 'key1');
       expect(span).toHaveAttribute('data-my-ns', 'translation');
     });
+
+    it('should return raw string when asString option is true', () => {
+      setDefaults({ debugKeyAttributes: true });
+
+      function TestComponent() {
+        const { t } = useTranslation();
+        return <div>{t('key1', { asString: true })}</div>;
+      }
+
+      const { container } = render(<TestComponent />);
+
+      // No span wrapper when asString is true
+      expect(container.querySelector('span')).toBeNull();
+      expect(container.firstChild.textContent).toBe('test');
+    });
+
+    it('should wrap with span when asString is false (default)', () => {
+      setDefaults({ debugKeyAttributes: true });
+
+      function TestComponent() {
+        const { t } = useTranslation();
+        return <div>{t('key1', { asString: false })}</div>;
+      }
+
+      const { container } = render(<TestComponent />);
+      const span = container.querySelector('span');
+
+      expect(span).toHaveAttribute('data-i18n-key', 'key1');
+      expect(span).toHaveAttribute('data-i18n-namespace', 'translation');
+      expect(span.textContent).toBe('test');
+    });
+
+    it('should return raw string when asString is true even with custom attribute config', () => {
+      setDefaults({
+        debugKeyAttributes: {
+          keyAttributeName: 'data-my-key',
+          namespaceAttributeName: 'data-my-ns',
+        },
+      });
+
+      function TestComponent() {
+        const { t } = useTranslation();
+        return <div>{t('key1', { asString: true })}</div>;
+      }
+
+      const { container } = render(<TestComponent />);
+
+      // No span wrapper when asString is true
+      expect(container.querySelector('span')).toBeNull();
+      expect(container.firstChild.textContent).toBe('test');
+    });
   });
 
   describe('defaults', () => {

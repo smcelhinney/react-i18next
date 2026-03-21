@@ -3550,6 +3550,7 @@
       const wrappedT = debugOpts && calculatedT ? (key, tOptions) => {
         const text = calculatedT(key, tOptions);
         if (!isString(text)) return text;
+        if (tOptions?.asString) return text;
         const ns = tOptions?.ns || calculatedT.ns || namespaces[0];
         const keyAttrName = typeof debugOpts === 'object' ? debugOpts.keyAttributeName || 'data-i18n-key' : 'data-i18n-key';
         const nsAttrName = typeof debugOpts === 'object' ? debugOpts.namespaceAttributeName || 'data-i18n-namespace' : 'data-i18n-namespace';
