@@ -2410,7 +2410,8 @@
     transKeepBasicHtmlNodesFor: ['br', 'strong', 'i', 'p'],
     useSuspense: true,
     unescape,
-    transDefaultProps: undefined
+    transDefaultProps: undefined,
+    debugKeyAttributes: false
   };
   const setDefaults = (options = {}) => {
     defaultOptions = {
@@ -2835,7 +2836,14 @@
     }
     const content = renderNodes(indexedChildren, componentsMap, translation, i18n, reactI18nextOptions, combinedTOpts, mergedShouldUnescape);
     const useAsParent = parent ?? reactI18nextOptions.defaultTransParent;
-    return useAsParent ? React.createElement(useAsParent, additionalProps, content) : content;
+    const debugOpts = reactI18nextOptions.debugKeyAttributes;
+    const shouldAddDebugAttrs = debugOpts && useAsParent;
+    const finalAdditionalProps = shouldAddDebugAttrs ? {
+      ...additionalProps,
+      [typeof debugOpts === 'object' ? debugOpts.keyAttributeName || 'data-i18n-key' : 'data-i18n-key']: i18nKey,
+      [typeof debugOpts === 'object' ? debugOpts.namespaceAttributeName || 'data-i18n-namespace' : 'data-i18n-namespace']: Array.isArray(namespaces) ? namespaces.join(',') : namespaces
+    } : additionalProps;
+    return useAsParent ? React.createElement(useAsParent, finalAdditionalProps, content) : content;
   }
 
   const initReactI18next = {
@@ -3538,8 +3546,21 @@
         return lastSnapshot;
       }
       const calculatedT = i18n.getFixedT(currentLng, i18nOptions.nsMode === 'fallback' ? namespaces : namespaces[0], keyPrefix);
+      const debugOpts = i18nOptions.debugKeyAttributes;
+      const wrappedT = debugOpts && calculatedT ? (key, tOptions) => {
+        const text = calculatedT(key, tOptions);
+        if (!isString(text)) return text;
+        if (tOptions?.asString) return text;
+        const ns = tOptions?.ns || calculatedT.ns || namespaces[0];
+        const keyAttrName = typeof debugOpts === 'object' ? debugOpts.keyAttributeName || 'data-i18n-key' : 'data-i18n-key';
+        const nsAttrName = typeof debugOpts === 'object' ? debugOpts.namespaceAttributeName || 'data-i18n-namespace' : 'data-i18n-namespace';
+        return React.createElement('span', {
+          [keyAttrName]: key,
+          [nsAttrName]: ns
+        }, text);
+      } : calculatedT;
       const newSnapshot = {
-        t: calculatedT,
+        t: wrappedT,
         ready: calculatedReady,
         lng: currentLng,
         keyPrefix,

@@ -122,6 +122,8 @@ export const useTranslation = (ns, props = {}) => {
             const text = calculatedT(key, tOptions);
             // Skip wrapping if text is not a string (could be array, object, etc.)
             if (!isString(text)) return text;
+            // Skip wrapping if asString option is true - return raw string
+            if (tOptions?.asString) return text;
 
             const ns = tOptions?.ns || calculatedT.ns || namespaces[0];
             const keyAttrName =
