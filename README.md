@@ -1,4 +1,54 @@
-# react-i18next [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Awesome%20react-i18next%20for%20react.js%20based%20on%20i18next%20internationalization%20ecosystem%20&url=https://github.com/i18next/react-i18next&via=jamuhl&hashtags=i18n,reactjs,js,dev)
+# @appstructio/react-i18next
+
+> **Fork of [react-i18next](https://github.com/i18next/react-i18next)**
+
+This is a fork of the official [react-i18next](https://github.com/i18next/react-i18next) library with additional features.
+
+## Differences from upstream
+
+### 1. Package name
+
+Published as `@appstructio/react-i18next` instead of `react-i18next`.
+
+### 2. `debugKeyAttributes` option
+
+When enabled, the `t()` function wraps translations in a `<span>` with debug attributes:
+
+```js
+// Enable globally
+initReactI18next.init({
+  react: {
+    debugKeyAttributes: true, // or object config
+  },
+});
+
+// Result: <span data-i18n-key="key" data-i18n-namespace="ns">translation</span>
+```
+
+Custom attribute names:
+
+```js
+debugKeyAttributes: {
+  keyAttributeName: 'data-my-key',
+  namespaceAttributeName: 'data-my-ns',
+}
+```
+
+### 3. `asString` option for `t()`
+
+When `debugKeyAttributes` is enabled, use `asString: true` to return the raw string without the `<span>` wrapper:
+
+```js
+// With debugKeyAttributes enabled:
+t('key'); // Returns <span data-i18n-key="key">translation</span>
+t('key', { asString: true }); // Returns "translation" (raw string)
+```
+
+---
+
+# react-i18next (Original)
+
+[![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Awesome%20react-i18next%20for%20react.js%20based%20on%20i18next%20internationalization%20ecosystem%20&url=https://github.com/i18next/react-i18next&via=jamuhl&hashtags=i18n,reactjs,js,dev)
 
 [![CI](https://github.com/i18next/react-i18next/actions/workflows/CI.yml/badge.svg)](https://github.com/i18next/react-i18next/actions/workflows/CI.yml)
 [![Coverage Status](https://coveralls.io/repos/github/i18next/react-i18next/badge.svg)](https://coveralls.io/github/i18next/react-i18next)
@@ -89,10 +139,13 @@ Want to learn more about how seamless your internationalization and translation 
 
 ### Installation
 
-Source can be loaded via [npm](https://www.npmjs.com/package/react-i18next) or [downloaded](https://github.com/i18next/react-i18next/blob/master/react-i18next.min.js) from this repo.
+Source can be loaded via [npm](https://www.npmjs.com/package/@appstructio/react-i18next).
 
 ```
-# npm package
+# npm package (this fork)
+$ npm install @appstructio/react-i18next
+
+# or the original package
 $ npm install react-i18next
 ```
 
